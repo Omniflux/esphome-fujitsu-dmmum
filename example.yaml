@@ -1,0 +1,75 @@
+substitutions:
+  device_name: esp32-poe-iso
+  friendly_name: OU Controller
+  esp_board: esp32-poe-iso
+
+external_components:
+  - source: github://Omniflux/esphome-tzsp
+  - source: github://Omniflux/esphome-fujitsu-dmmum
+
+esphome:
+  name: ${device_name}
+  friendly_name: ${friendly_name}
+
+esp32:
+  board: ${esp_board}
+  framework:
+    type: esp-idf
+
+api:
+
+logger:
+  level: DEBUG
+
+sensor:
+  - platform: uptime
+    name: Uptime
+
+button:
+  - platform: restart
+    name: Restart
+  - platform: safe_mode
+    name: Restart (Safe Mode)
+
+ota:
+  - platform: esphome
+    password: !secret ota_password
+
+ethernet:
+  type: LAN8720
+  mdc_pin: GPIO23
+  mdio_pin: GPIO18
+  clk_mode: GPIO17_OUT
+  power_pin: GPIO12
+  manual_ip:
+    static_ip: 10.0.0.240
+    gateway: 10.0.0.1
+    subnet: 255.255.255.0
+
+uart:
+  tx_pin: GPIO13  # Device dependent
+  rx_pin: GPIO14  # Device dependent
+  baud_rate: 500
+  parity: EVEN
+
+fujitsu_general_airstage_h_central_controller:
+#  tzsp:
+#    ip: 192.168.12.23
+#    protocol: 254
+
+climate:
+  - platform: fujitsu_general_airstage_h_central_controller
+    name: Room 1
+    indoor_unit: 1
+  - platform: fujitsu_general_airstage_h_central_controller
+    name: Room 2
+    indoor_unit: 2
+  - platform: fujitsu_general_airstage_h_central_controller
+    name: Room 3
+    indoor_unit: 3
+  - platform: fujitsu_general_airstage_h_central_controller
+    name: Room 4
+    indoor_unit: 4
+  - platform: fujitsu_general_airstage_h_central_controller
+    name: Room 5
+    indoor_unit: 5
