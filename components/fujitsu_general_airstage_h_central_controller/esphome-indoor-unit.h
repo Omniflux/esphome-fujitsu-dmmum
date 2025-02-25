@@ -40,11 +40,11 @@ class FujitsuGeneralAirStageHIndoorUnit : public Component, public climate::Clim
     private:
         void update_from_device(const fujitsu_general::airstage::h::central_controller::Config& data);
 
-        static constexpr climate::ClimateMode mode_to_climate_mode(fujitsu_general::airstage::h::central_controller::ModeEnum mode) const noexcept;
-        static constexpr climate::ClimateFanMode fan_speed_to_climate_fan_mode(fujitsu_general::airstage::h::central_controller::FanSpeedEnum fan_speed) const noexcept;
+        static constexpr climate::ClimateMode mode_to_climate_mode(fujitsu_general::airstage::h::central_controller::ModeEnum mode) noexcept;
+        static constexpr climate::ClimateFanMode fan_speed_to_climate_fan_mode(fujitsu_general::airstage::h::central_controller::FanSpeedEnum fan_speed) noexcept;
 
-        static constexpr fujitsu_general::airstage::h::central_controller::ModeEnum climate_mode_to_mode(climate::ClimateMode mode) const noexcept;
-        static constexpr fujitsu_general::airstage::h::central_controller::FanSpeedEnum climate_fan_mode_to_fan_speed(climate::ClimateFanMode fan_speed) const noexcept;
+        static constexpr fujitsu_general::airstage::h::central_controller::ModeEnum climate_mode_to_mode(climate::ClimateMode mode) noexcept;
+        static constexpr fujitsu_general::airstage::h::central_controller::FanSpeedEnum climate_fan_mode_to_fan_speed(climate::ClimateFanMode fan_speed) noexcept;
 };
 
 }

@@ -60,7 +60,7 @@ void FujitsuGeneralAirStageHCentralController::update_from_device(const fujitsu_
         callback->second(data);
 }
 
-constexpr uint8_t FujitsuGeneralAirStageHCentralController::uart_data_bits_to_uart_config_data_bits(uart_word_length_t bits) const {
+constexpr uint8_t FujitsuGeneralAirStageHCentralController::uart_data_bits_to_uart_config_data_bits(uart_word_length_t bits) {
     switch (bits) {
         case UART_DATA_5_BITS: return 5;
         case UART_DATA_6_BITS: return 6;
@@ -71,7 +71,7 @@ constexpr uint8_t FujitsuGeneralAirStageHCentralController::uart_data_bits_to_ua
     }
 }
 
-constexpr uint8_t FujitsuGeneralAirStageHCentralController::uart_stop_bits_to_uart_config_stop_bits(uart_stop_bits_t bits) const {
+constexpr uint8_t FujitsuGeneralAirStageHCentralController::uart_stop_bits_to_uart_config_stop_bits(uart_stop_bits_t bits) {
     switch (bits) {
         case UART_STOP_BITS_1: return 1;
 
@@ -80,7 +80,7 @@ constexpr uint8_t FujitsuGeneralAirStageHCentralController::uart_stop_bits_to_ua
     }
 }
 
-constexpr uart::UARTParityOptions FujitsuGeneralAirStageHCentralController::uart_parity_to_uart_config_parity(uart_parity_t parity) const {
+constexpr uart::UARTParityOptions FujitsuGeneralAirStageHCentralController::uart_parity_to_uart_config_parity(uart_parity_t parity) {
     switch (parity) {
         case UART_PARITY_EVEN:  return uart::UART_CONFIG_PARITY_EVEN;
         case UART_PARITY_ODD:   return uart::UART_CONFIG_PARITY_ODD;

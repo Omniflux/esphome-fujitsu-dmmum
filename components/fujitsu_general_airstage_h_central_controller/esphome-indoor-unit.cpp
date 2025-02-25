@@ -141,7 +141,7 @@ void FujitsuGeneralAirStageHIndoorUnit::update_from_device(const fujitsu_general
         this->publish_state();
 }
 
-constexpr climate::ClimateMode FujitsuGeneralAirStageHIndoorUnit::mode_to_climate_mode(const fujitsu_general::airstage::h::central_controller::ModeEnum mode) const {
+constexpr climate::ClimateMode FujitsuGeneralAirStageHIndoorUnit::mode_to_climate_mode(const fujitsu_general::airstage::h::central_controller::ModeEnum mode) {
     using climate::ClimateMode;
     using FujitsuMode = fujitsu_general::airstage::h::central_controller::ModeEnum;
 
@@ -157,7 +157,7 @@ constexpr climate::ClimateMode FujitsuGeneralAirStageHIndoorUnit::mode_to_climat
     }
 }
 
-constexpr climate::ClimateFanMode FujitsuGeneralAirStageHIndoorUnit::fan_speed_to_climate_fan_mode(const fujitsu_general::airstage::h::central_controller::FanSpeedEnum fan_speed) const {
+constexpr climate::ClimateFanMode FujitsuGeneralAirStageHIndoorUnit::fan_speed_to_climate_fan_mode(const fujitsu_general::airstage::h::central_controller::FanSpeedEnum fan_speed) {
     using climate::ClimateFanMode;
     using FujitsuFanMode = fujitsu_general::airstage::h::central_controller::FanSpeedEnum;
 
@@ -173,7 +173,7 @@ constexpr climate::ClimateFanMode FujitsuGeneralAirStageHIndoorUnit::fan_speed_t
     }
 }
 
-constexpr fujitsu_general::airstage::h::central_controller::ModeEnum FujitsuGeneralAirStageHIndoorUnit::climate_mode_to_mode(climate::ClimateMode mode) const {
+constexpr fujitsu_general::airstage::h::central_controller::ModeEnum FujitsuGeneralAirStageHIndoorUnit::climate_mode_to_mode(climate::ClimateMode mode) {
     using climate::ClimateMode;
     using FujitsuMode = fujitsu_general::airstage::h::central_controller::ModeEnum;
 
@@ -189,7 +189,7 @@ constexpr fujitsu_general::airstage::h::central_controller::ModeEnum FujitsuGene
     }
 } 
 
-constexpr fujitsu_general::airstage::h::central_controller::FanSpeedEnum FujitsuGeneralAirStageHIndoorUnit::climate_fan_mode_to_fan_speed(climate::ClimateFanMode fan_speed) const {
+constexpr fujitsu_general::airstage::h::central_controller::FanSpeedEnum FujitsuGeneralAirStageHIndoorUnit::climate_fan_mode_to_fan_speed(climate::ClimateFanMode fan_speed) {
     using climate::ClimateFanMode;
     using FujitsuFanMode = fujitsu_general::airstage::h::central_controller::FanSpeedEnum;
 

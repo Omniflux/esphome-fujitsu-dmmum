@@ -194,23 +194,23 @@ void Controller::uart_event_task() {
     }
 }
 
-void Controller::uart_read_bytes(uint8_t *buf, size_t length) {
+void Controller::uart_read_bytes(uint8_t *buf, size_t length) const {
     if (this->callbacks.ReadBytes)
         callbacks.ReadBytes(buf, length);
     else
         ::uart_read_bytes(this->uart_num, buf, length, portMAX_DELAY);
 }
 
-void Controller::uart_write_bytes(const uint8_t *buf, size_t length) {
+void Controller::uart_write_bytes(const uint8_t *buf, size_t length) const {
     if (this->callbacks.WriteBytes)
         callbacks.WriteBytes(buf, length);
     else
         ::uart_write_bytes(this->uart_num, buf, length);
 }
 
-bool Controller::bool can_control_unit(uint8_t unit, bool ignore_lock) const;
+bool Controller::can_control_unit(uint8_t unit, bool ignore_lock) const {
     return this->current_configuration.contains(unit) &&
-        (ignore_lock || !this->current_configuration[unit].OutdoorUnit.OpRestricted);
+        (ignore_lock || !this->current_configuration.at(unit).OutdoorUnit.OpRestricted);
 }
 
 void Controller::process_packet(const Packet& packet) {

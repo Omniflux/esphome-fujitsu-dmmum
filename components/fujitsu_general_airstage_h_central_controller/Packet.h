@@ -39,7 +39,6 @@ enum class TriStateEnum : uint8_t {
     False,
     True
 };
-
 constexpr TriStateEnum boolToTriState(bool b) {
     return b ? TriStateEnum::True : TriStateEnum::False;
 }
@@ -140,7 +139,7 @@ class Packet {
 
         struct Config Config {};
 
-        static void invert_buffer(Buffer& buffer) { *reinterpret_cast<uint64_t*>(buffer.data()) = ~*reinterpret_cast<uint64_t*>(buffer.data()); } const;
+        static void invert_buffer(Buffer& buffer) { *reinterpret_cast<uint64_t*>(buffer.data()) = ~*reinterpret_cast<uint64_t*>(buffer.data()); };
 };
 
 }

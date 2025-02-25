@@ -35,9 +35,9 @@ class FujitsuGeneralAirStageHCentralController : public Component, public uart::
 
         void update_from_device(const fujitsu_general::airstage::h::central_controller::Config& data);
 
-        static constexpr uint8_t uart_data_bits_to_uart_config_data_bits(uart_word_length_t bits) const noexcept;
-        static constexpr uint8_t uart_stop_bits_to_uart_config_stop_bits(uart_stop_bits_t bits) const noexcept;
-        static constexpr uart::UARTParityOptions uart_parity_to_uart_config_parity(uart_parity_t parity) const noexcept;
+        static constexpr uint8_t uart_data_bits_to_uart_config_data_bits(uart_word_length_t bits) noexcept;
+        static constexpr uint8_t uart_stop_bits_to_uart_config_stop_bits(uart_stop_bits_t bits) noexcept;
+        static constexpr uart::UARTParityOptions uart_parity_to_uart_config_parity(uart_parity_t parity) noexcept;
 };
 
 }
