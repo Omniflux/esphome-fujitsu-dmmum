@@ -9,11 +9,39 @@ static const auto TAG = "esphome::fujitsu_general_airstage_h_central_controller:
 void FujitsuGeneralAirStageHIndoorUnit::setup() {
     this->controller_->set_config_callback(this->indoor_unit_, [this](const fujitsu_general::airstage::h::central_controller::Config& data){ this->update_from_device(data); });
 
-    if (this->temperature_sensor_)
-        this->temperature_sensor_->add_on_raw_state_callback([this](float temperature) {
-            this->current_temperature = temperature;
+    if (this->humidity_sensor_)
+    {
+        this->humidity_sensor_->add_on_raw_state_callback([this](float state) {
+            this->current_humidity = state;
             this->publish_state();
         });
+
+        this->current_humidity = this->humidity_sensor_->state;
+    }
+
+    if (this->temperature_sensor_)
+    {
+        // Temperature sensor is in Fahrenheit
+        if (this->temperature_sensor_->get_unit_of_measurement().ends_with("F"))
+        {
+            this->temperature_sensor_->add_on_raw_state_callback([this](float state) {
+                this->current_temperature = (state - 32.0) * (5.0/9.0);
+                this->publish_state();
+            });
+
+            this->current_temperature = (this->temperature_sensor_->state - 32.0) * (5.0/9.0);
+        }
+        // Temperature sensor is in Celsius
+        else
+        {
+            this->temperature_sensor_->add_on_raw_state_callback([this](float state) {
+                this->current_temperature = state;
+                this->publish_state();
+            });
+
+            this->current_temperature = this->temperature_sensor_->state;
+        }
+    }
 }
 
 void FujitsuGeneralAirStageHIndoorUnit::dump_config() {
@@ -21,6 +49,7 @@ void FujitsuGeneralAirStageHIndoorUnit::dump_config() {
     ESP_LOGCONFIG(TAG, "  Indoor Unit: %u", this->indoor_unit_ + 1);
     ESP_LOGCONFIG(TAG, "  Ignore Lock: %s", this->ignore_lock_ ? "YES" : "NO");
     LOG_SENSOR("  ", "Temperature Sensor", this->temperature_sensor_);
+    LOG_SENSOR("  ", "Humidity Sensor", this->humidity_sensor_);
     this->dump_traits_(TAG);
 }
 
@@ -34,7 +63,8 @@ climate::ClimateTraits FujitsuGeneralAirStageHIndoorUnit::traits() {
     traits.set_visual_min_temperature(fujitsu_general::airstage::h::central_controller::MinSetpoint);
     traits.set_visual_max_temperature(fujitsu_general::airstage::h::central_controller::MaxSetpoint);
 
-    // Current temperature
+    // Current temperature / humidity
+    traits.set_supports_current_humidity(this->humidity_sensor_ != nullptr);
     traits.set_supports_current_temperature(this->temperature_sensor_ != nullptr);
 
     // Mode

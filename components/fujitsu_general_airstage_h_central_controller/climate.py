@@ -12,6 +12,7 @@ from esphome.const import (
     CONF_ID,
     CONF_NAME,
     CONF_SENSOR,
+    CONF_HUMIDITY_SENSOR,
     DEVICE_CLASS_PROBLEM,
     ENTITY_CATEGORY_CONFIG,
     ENTITY_CATEGORY_DIAGNOSTIC
@@ -63,7 +64,8 @@ CONFIG_SCHEMA = climate.CLIMATE_SCHEMA.extend(
             entity_category=ENTITY_CATEGORY_CONFIG,
             default_restore_mode="RESTORE_DEFAULT_OFF"
         ),
-        cv.Optional(CONF_SENSOR): cv.use_id(sensor.Sensor)
+        cv.Optional(CONF_SENSOR): cv.use_id(sensor.Sensor),
+        cv.Optional(CONF_HUMIDITY_SENSOR): cv.use_id(sensor.Sensor)
     }
 ).extend(cv.COMPONENT_SCHEMA)
 
@@ -92,3 +94,6 @@ async def to_code(config):
 
     if CONF_SENSOR in config:
         cg.add(var.set_temperature_sensor(await cg.get_variable(config[CONF_SENSOR])))
+
+    if CONF_HUMIDITY_SENSOR in config:
+        cg.add(var.set_humidity_sensor(await cg.get_variable(config[CONF_HUMIDITY_SENSOR])))
