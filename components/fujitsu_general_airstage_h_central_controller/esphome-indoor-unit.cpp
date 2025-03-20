@@ -68,22 +68,29 @@ climate::ClimateTraits FujitsuGeneralAirStageHIndoorUnit::traits() {
     traits.set_supports_current_temperature(this->temperature_sensor_ != nullptr);
 
     // Mode
-    traits.add_supported_mode(ClimateMode::CLIMATE_MODE_HEAT_COOL);
-    traits.add_supported_mode(ClimateMode::CLIMATE_MODE_HEAT);
-    traits.add_supported_mode(ClimateMode::CLIMATE_MODE_FAN_ONLY);
-    traits.add_supported_mode(ClimateMode::CLIMATE_MODE_DRY);
-    traits.add_supported_mode(ClimateMode::CLIMATE_MODE_COOL);
+    traits.set_supported_modes({
+        ClimateMode::CLIMATE_MODE_OFF,
+        ClimateMode::CLIMATE_MODE_HEAT_COOL,
+        ClimateMode::CLIMATE_MODE_COOL,
+        ClimateMode::CLIMATE_MODE_HEAT,
+        ClimateMode::CLIMATE_MODE_DRY,
+        ClimateMode::CLIMATE_MODE_FAN_ONLY
+    });
 
     // Fan mode / speed
-    traits.add_supported_fan_mode(ClimateFanMode::CLIMATE_FAN_QUIET);
-    traits.add_supported_fan_mode(ClimateFanMode::CLIMATE_FAN_LOW);
-    traits.add_supported_fan_mode(ClimateFanMode::CLIMATE_FAN_MEDIUM);
-    traits.add_supported_fan_mode(ClimateFanMode::CLIMATE_FAN_HIGH);
-    traits.add_supported_fan_mode(ClimateFanMode::CLIMATE_FAN_AUTO);
+    traits.set_supported_fan_modes({
+        ClimateFanMode::CLIMATE_FAN_AUTO,
+        ClimateFanMode::CLIMATE_FAN_LOW,
+        ClimateFanMode::CLIMATE_FAN_MEDIUM,
+        ClimateFanMode::CLIMATE_FAN_HIGH,
+        ClimateFanMode::CLIMATE_FAN_QUIET
+    });
 
     // Economy mode
-    traits.add_supported_preset(ClimatePreset::CLIMATE_PRESET_NONE);
-    traits.add_supported_preset(ClimatePreset::CLIMATE_PRESET_ECO);
+    traits.set_supported_presets({
+        ClimatePreset::CLIMATE_PRESET_NONE,
+        ClimatePreset::CLIMATE_PRESET_ECO
+    });
 
     return traits;
 }
