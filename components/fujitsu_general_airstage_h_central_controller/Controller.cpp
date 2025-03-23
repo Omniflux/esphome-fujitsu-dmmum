@@ -20,7 +20,8 @@ constexpr auto bits_per_symbol() {
     ;
 }
 constexpr auto milliseconds_per_second = 1000;
-constexpr auto TokenTimeout = 1.5 * milliseconds_per_second * UARTInterPacketSymbolSpacing * Packet::FrameSize * bits_per_symbol() / UARTConfig.baud_rate;
+constexpr auto InterPacketDelay = milliseconds_per_second * UARTInterPacketSymbolSpacing * Packet::FrameSize * bits_per_symbol() / UARTConfig.baud_rate;
+constexpr auto TokenTimeout = 1.5 * InterPacketDelay;
 
 bool Controller::start() {
     int err;
@@ -113,7 +114,8 @@ void Controller::uart_event_task() {
             Packet::Buffer buffer = packet.to_buffer();
             this->uart_write_bytes(buffer.data(), buffer.size());
 
-            // TODO May need to insert interpacket delay here...
+            // ODU will only process first packet if they are not sent as separate frames
+            vTaskDelay(pdMS_TO_TICKS(InterPacketDelay));
         }
         this->changed_configuration.clear();
 
