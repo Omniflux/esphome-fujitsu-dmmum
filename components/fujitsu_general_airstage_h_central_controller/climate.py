@@ -29,7 +29,7 @@ AUTO_LOAD = ["binary_sensor", "climate", "sensor", "switch", CONF_CENTRAL_CONTRO
 
 CONF_INDOOR_UNIT = 'indoor_unit'
 CONF_IGNORE_LOCK = "ignore_lock"
-CONF_STANDBY_MODE = "standby_mode"
+CONF_INCOMPATIBLE_MODE = "incompatible_mode"
 CONF_ERROR_STATE = "error_state"
 CONF_MIN_HEAT = "min_heat"
 CONF_RC_PROHIBIT = "rc_prohibit"
@@ -44,7 +44,7 @@ CONFIG_SCHEMA = climate.CLIMATE_SCHEMA.extend(
         cv.GenerateID(CONF_CENTRAL_CONTROLLER_ID): cv.use_id(FujitsuGeneralAirStageHCentralController),
         cv.Required(CONF_INDOOR_UNIT): cv.int_range(1,6),
         cv.Optional(CONF_IGNORE_LOCK, default=False): cv.boolean,
-        cv.Optional(CONF_STANDBY_MODE, default={CONF_NAME: "Standby Mode"}): binary_sensor.binary_sensor_schema(
+        cv.Optional(CONF_INCOMPATIBLE_MODE, default={CONF_NAME: "Incompatible Mode"}): binary_sensor.binary_sensor_schema(
             BinarySensor,
             entity_category=ENTITY_CATEGORY_DIAGNOSTIC,
             device_class=DEVICE_CLASS_PROBLEM
@@ -76,9 +76,9 @@ async def to_code(config):
 
     cg.add(var.set_ignore_lock(config[CONF_IGNORE_LOCK]))
 
-    config[CONF_STANDBY_MODE][CONF_NAME] = config[CONF_NAME] + " " + config[CONF_STANDBY_MODE][CONF_NAME]
-    varx = cg.Pvariable(config[CONF_STANDBY_MODE][CONF_ID], var.standby_sensor)
-    await binary_sensor.register_binary_sensor(varx, config[CONF_STANDBY_MODE])
+    config[CONF_INCOMPATIBLE_MODE][CONF_NAME] = config[CONF_NAME] + " " + config[CONF_INCOMPATIBLE_MODE][CONF_NAME]
+    varx = cg.Pvariable(config[CONF_INCOMPATIBLE_MODE][CONF_ID], var.incompatible_mode_sensor)
+    await binary_sensor.register_binary_sensor(varx, config[CONF_INCOMPATIBLE_MODE])
 
     config[CONF_ERROR_STATE][CONF_NAME] = config[CONF_NAME] + " " + config[CONF_ERROR_STATE][CONF_NAME]
     varx = cg.Pvariable(config[CONF_ERROR_STATE][CONF_ID], var.error_sensor)

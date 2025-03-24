@@ -28,6 +28,11 @@ constexpr uint8_t UARTInterPacketSymbolSpacing = 2;
 constexpr uint8_t MinSetpoint = 16;
 constexpr uint8_t MaxSetpoint = 30;
 
+enum class ODUModeChangeStatus : bool {
+    Pending,
+    Complete
+};
+
 class Controller {
     public:
         using ConfigCallback = std::function<void(const Config&)>;
@@ -45,6 +50,7 @@ class Controller {
 
         bool start();
 
+        void odu_mode_change();
         void set_low_noise(bool low_noise);
 
         bool set_rc_prohibit(uint8_t unit, bool rc_prohibit);
@@ -68,6 +74,7 @@ class Controller {
 
         std::map<uint8_t, struct Config> current_configuration;
         std::map<uint8_t, struct Config> changed_configuration;
+        std::map<uint8_t, ODUModeChangeStatus> odu_mode_change_units;
 
         [[noreturn]] void uart_event_task();
         void uart_read_bytes(uint8_t *buf, size_t length) const;

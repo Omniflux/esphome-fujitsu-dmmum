@@ -8,6 +8,7 @@
 
 #include <esphome/components/tzsp/tzsp.h>
 
+#include "esphome-custom-button.h"
 #include "esphome-custom-switch.h"
 #include "Controller.h"
 
@@ -17,6 +18,7 @@ class FujitsuGeneralAirStageHCentralController : public Component, public uart::
     friend class FujitsuGeneralAirStageHIndoorUnit;
 
     public:
+        CustomButton* odu_mode_change_button = new CustomButton([this]() { this->controller->odu_mode_change(); });
         CustomSwitch* low_noise_switch = new CustomSwitch([this](bool state) { this->controller->set_low_noise(state); return state; });
 
         FujitsuGeneralAirStageHCentralController(uart::IDFUARTComponent *parent) : uart::UARTDevice(parent) {}

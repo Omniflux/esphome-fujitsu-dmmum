@@ -31,7 +31,7 @@ Packet::Packet(Buffer buffer) {
 
             this->Config.OutdoorUnit.OpRestricted = getField(BMS.Config.OutdoorUnit.OpRestricted);
             this->Config.OutdoorUnit.Error = getField(BMS.Config.OutdoorUnit.Error);
-            this->Config.OutdoorUnit.StandbyMode = getField(BMS.Config.OutdoorUnit.StandbyMode);
+            this->Config.OutdoorUnit.IncompatibleMode = getField(BMS.Config.OutdoorUnit.IncompatibleMode);
             this->Config.OutdoorUnit.TestRun = getField(BMS.Config.OutdoorUnit.TestRun);
             this->Config.OutdoorUnit.RCProhibit = getField(BMS.Config.OutdoorUnit.RCProhibit);
 
@@ -100,7 +100,7 @@ Packet::Buffer Packet::to_buffer() const {
 
             setField(BMS.Config.OutdoorUnit.OpRestricted, this->Config.OutdoorUnit.OpRestricted);
             setField(BMS.Config.OutdoorUnit.Error, this->Config.OutdoorUnit.Error);
-            setField(BMS.Config.OutdoorUnit.StandbyMode, this->Config.OutdoorUnit.StandbyMode);
+            setField(BMS.Config.OutdoorUnit.IncompatibleMode, this->Config.OutdoorUnit.IncompatibleMode);
             setField(BMS.Config.OutdoorUnit.TestRun, this->Config.OutdoorUnit.TestRun);
             setField(BMS.Config.OutdoorUnit.RCProhibit, this->Config.OutdoorUnit.RCProhibit);
 

@@ -12,7 +12,7 @@ namespace esphome::fujitsu_general_airstage_h_central_controller {
 
 class FujitsuGeneralAirStageHIndoorUnit : public Component, public climate::Climate {
     public:
-        binary_sensor::BinarySensor* standby_sensor = new binary_sensor::BinarySensor();
+        binary_sensor::BinarySensor* incompatible_mode_sensor = new binary_sensor::BinarySensor();
         binary_sensor::BinarySensor* error_sensor = new binary_sensor::BinarySensor();
 
         CustomSwitch* min_heat_switch = new CustomSwitch([this](bool state) { return this->controller_->controller->set_min_heat(this->indoor_unit_, state); });

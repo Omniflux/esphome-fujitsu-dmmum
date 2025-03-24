@@ -135,10 +135,10 @@ void FujitsuGeneralAirStageHIndoorUnit::update_from_device(const fujitsu_general
     if (!this->error_sensor->has_state())
         this->error_sensor->publish_state(data.OutdoorUnit.Error);
 
-    // Standby mode sensor
-    // This can indicate defrosting, performing oil recovery, waiting for other units to complete....
-    if (!this->standby_sensor->has_state() || data.OutdoorUnit.StandbyMode != this->standby_sensor->state)
-        this->standby_sensor->publish_state(data.OutdoorUnit.StandbyMode);
+    // Incompatible mode sensor
+    // Indicates configured mode is incompatible with current ODU mode
+    if (!this->incompatible_mode_sensor->has_state() || data.OutdoorUnit.IncompatibleMode != this->incompatible_mode_sensor->state)
+        this->incompatible_mode_sensor->publish_state(data.OutdoorUnit.IncompatibleMode);
 
     // Minimum Heat mode    // TODO May need to clear eco mode
     if (data.OutdoorUnit.MinHeat != this->min_heat_switch->state)

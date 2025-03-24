@@ -219,14 +219,41 @@ void Controller::process_packet(const Packet& packet) {
     if (packet.SourceType == AddressTypeEnum::OutdoorUnit) {
         // Setpoint of 0 indicates end of list, not state of an indoor unit
         if (packet.Config.Setpoint) {
-            if (this->current_configuration[packet.Config.OutdoorUnit.IndoorUnit] != packet.Config)
-            {
-                this->current_configuration[packet.Config.OutdoorUnit.IndoorUnit] = packet.Config;
+            const auto unit = packet.Config.OutdoorUnit.IndoorUnit;
+
+            // Configuration has changed
+            if (this->current_configuration[unit] != packet.Config) {
+                this->current_configuration[unit] = packet.Config;
+
+                // ODU mode change in progress
+                if (this->odu_mode_change_units.contains(unit) && this->odu_mode_change_units.at(unit) == ODUModeChangeStatus::Pending && !packet.Config.OutdoorUnit.Enabled) {
+                    this->odu_mode_change_units[unit] = ODUModeChangeStatus::Complete;
+
+                    // Switching modes is complete
+                    if (std::ranges::all_of(std::views::values(this->odu_mode_change_units), [](const auto& s) { return s == ODUModeChangeStatus::Complete; })) {
+                        for (const auto unit : std::views::keys(this->odu_mode_change_units))
+                            this->set_enabled(unit, true, true);
+
+                        this->odu_mode_change_units.clear();
+                    }
+                }
 
                 if (this->callbacks.Config)
                     this->callbacks.Config(packet.Config);
             }
         }
+    }
+}
+
+// Heat mode is incompatible with all other modes at the ODU.
+// Provide a method of switching the ODU mode if necessary.
+// Will not work if mode is locked out via priority operation function (Fujitsu Service Tip #34)
+// or if all units needing currently unavailable mode are set to Auto
+void Controller::odu_mode_change() {
+    if (std::ranges::any_of(std::views::values(this->current_configuration), [](const auto& c) { return c.OutdoorUnit.IncompatibleMode; }))
+        for (const auto unit : this->current_configuration | std::ranges::views::filter([](const auto& c) { return c.second.OutdoorUnit.Enabled && !c.second.OutdoorUnit.IncompatibleMode; }) | std::views::keys) {
+            this->odu_mode_change_units[unit] = ODUModeChangeStatus::Pending;
+            this->set_enabled(unit, false, true);
     }
 }
 

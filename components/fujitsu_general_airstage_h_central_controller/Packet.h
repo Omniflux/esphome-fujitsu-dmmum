@@ -52,7 +52,7 @@ struct Config {
         bool Economy;
         bool OpRestricted;
         bool Error;
-        bool StandbyMode;
+        bool IncompatibleMode;
         bool TestRun;
         bool RCProhibit;
 
@@ -105,7 +105,7 @@ constexpr struct BMS {
             constexpr static auto Setpoint           = ByteMaskShiftData(6, 0b00011111);
             constexpr static auto OpRestricted       = ByteMaskShiftData(7, 0b00010000);
             constexpr static auto Error              = ByteMaskShiftData(7, 0b00001000);
-            constexpr static auto StandbyMode        = ByteMaskShiftData(7, 0b00000100);
+            constexpr static auto IncompatibleMode   = ByteMaskShiftData(7, 0b00000100);
             constexpr static auto TestRun            = ByteMaskShiftData(7, 0b00000010);
             constexpr static auto RCProhibit         = ByteMaskShiftData(7, 0b00000001);
         } OutdoorUnit = {};
