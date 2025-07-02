@@ -22,9 +22,10 @@ CONF_CENTRAL_CONTROLLER_ID = "fujitsu_general_airstage_h_central_controller"
 CONF_ODU_MODE_CHANGE = "odu_mode_change"
 CONF_LOW_NOISE = "low_noise"
 
+custom_ns = cg.esphome_ns.namespace("custom")
+CustomButton = custom_ns.class_("CustomButton", cg.Component, button.Button)
+CustomSwitch = custom_ns.class_("CustomSwitch", cg.Component, switch.Switch)
 fujitsu_general_airstage_h_central_controller_ns = cg.esphome_ns.namespace("fujitsu_general_airstage_h_central_controller")
-CustomButton = fujitsu_general_airstage_h_central_controller_ns.class_("CustomButton", cg.Component, button.Button)
-CustomSwitch = fujitsu_general_airstage_h_central_controller_ns.class_("CustomSwitch", cg.Component, switch.Switch)
 FujitsuGeneralAirStageHCentralController = fujitsu_general_airstage_h_central_controller_ns.class_("FujitsuGeneralAirStageHCentralController", cg.Component, uart.UARTDevice)
 
 FINAL_VALIDATE_SCHEMA = uart.final_validate_device_schema(

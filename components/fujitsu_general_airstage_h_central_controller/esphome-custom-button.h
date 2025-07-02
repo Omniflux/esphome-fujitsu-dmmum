@@ -5,7 +5,7 @@
 #include <esphome/core/component.h>
 #include <esphome/components/button/button.h>
 
-namespace esphome::fujitsu_general_airstage_h_central_controller {
+namespace esphome::custom {
 
 class CustomButton : public Component, public button::Button {
     public:
@@ -16,5 +16,5 @@ class CustomButton : public Component, public button::Button {
         CustomButton() {};
         std::function<void()> func;
 };
-    
+
 }

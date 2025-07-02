@@ -5,7 +5,7 @@
 #include <esphome/core/component.h>
 #include <esphome/components/switch/switch.h>
 
-namespace esphome::fujitsu_general_airstage_h_central_controller {
+namespace esphome::custom {
 
 class CustomSwitch : public Component, public switch_::Switch {
     public:

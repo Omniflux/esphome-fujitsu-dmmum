@@ -20,6 +20,7 @@ from esphome.const import (
 
 from . import (
     CONF_CENTRAL_CONTROLLER_ID,
+    CustomSwitch,
     fujitsu_general_airstage_h_central_controller_ns,
     FujitsuGeneralAirStageHCentralController,
 )
@@ -35,7 +36,6 @@ CONF_MIN_HEAT = "min_heat"
 CONF_RC_PROHIBIT = "rc_prohibit"
 
 BinarySensor = cg.esphome_ns.class_("BinarySensor", cg.Component, binary_sensor.BinarySensor)
-CustomSwitch = fujitsu_general_airstage_h_central_controller_ns.class_("CustomSwitch", cg.Component, switch.Switch)
 FujitsuGeneralAirStageHIndoorUnit = fujitsu_general_airstage_h_central_controller_ns.class_("FujitsuGeneralAirStageHIndoorUnit", cg.Component, climate.Climate)
 
 CONFIG_SCHEMA = climate.climate_schema(FujitsuGeneralAirStageHIndoorUnit).extend(

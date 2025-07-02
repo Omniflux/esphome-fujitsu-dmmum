@@ -15,8 +15,8 @@ class FujitsuGeneralAirStageHIndoorUnit : public Component, public climate::Clim
         binary_sensor::BinarySensor* incompatible_mode_sensor = new binary_sensor::BinarySensor();
         binary_sensor::BinarySensor* error_sensor = new binary_sensor::BinarySensor();
 
-        CustomSwitch* min_heat_switch = new CustomSwitch([this](bool state) { return this->controller_->controller->set_min_heat(this->indoor_unit_, state); });
-        CustomSwitch* rc_prohibit_switch = new CustomSwitch([this](bool state) { return this->controller_->controller->set_rc_prohibit(this->indoor_unit_, state); });
+        custom::CustomSwitch* min_heat_switch = new custom::CustomSwitch([this](bool state) { return this->controller_->controller->set_min_heat(this->indoor_unit_, state); });
+        custom::CustomSwitch* rc_prohibit_switch = new custom::CustomSwitch([this](bool state) { return this->controller_->controller->set_rc_prohibit(this->indoor_unit_, state); });
 
         // Protocol uses zero based index for indoor units, but documentation does not...
         FujitsuGeneralAirStageHIndoorUnit(FujitsuGeneralAirStageHCentralController *controller, uint8_t indoor_unit) : controller_(controller), indoor_unit_(indoor_unit - 1) {}
