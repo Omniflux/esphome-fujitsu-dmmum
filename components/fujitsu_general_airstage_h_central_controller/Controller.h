@@ -46,7 +46,7 @@ class Controller {
         };
 
         Controller(uint8_t uart_num, const Callbacks& callbacks, QueueHandle_t uart_event_queue = nullptr)
-            : uart_num(uart_num), uart_event_queue(uart_event_queue), callbacks(callbacks) {}
+            : uart_num(static_cast<uart_port_t>(uart_num)), uart_event_queue(uart_event_queue), callbacks(callbacks) {}
 
         bool start();
 
@@ -68,7 +68,7 @@ class Controller {
         void process_packet(const Packet& packet);
 
     private:
-        uint8_t uart_num;
+        uart_port_t uart_num;
         QueueHandle_t uart_event_queue;
         Callbacks callbacks;
 
