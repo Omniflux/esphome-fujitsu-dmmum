@@ -38,9 +38,8 @@ BinarySensor = cg.esphome_ns.class_("BinarySensor", cg.Component, binary_sensor.
 CustomSwitch = fujitsu_general_airstage_h_central_controller_ns.class_("CustomSwitch", cg.Component, switch.Switch)
 FujitsuGeneralAirStageHIndoorUnit = fujitsu_general_airstage_h_central_controller_ns.class_("FujitsuGeneralAirStageHIndoorUnit", cg.Component, climate.Climate)
 
-CONFIG_SCHEMA = climate.CLIMATE_SCHEMA.extend(
+CONFIG_SCHEMA = climate.climate_schema(FujitsuGeneralAirStageHIndoorUnit).extend(
     {
-        cv.GenerateID(): cv.declare_id(FujitsuGeneralAirStageHIndoorUnit),
         cv.GenerateID(CONF_CENTRAL_CONTROLLER_ID): cv.use_id(FujitsuGeneralAirStageHCentralController),
         cv.Required(CONF_INDOOR_UNIT): cv.int_range(1,6),
         cv.Optional(CONF_IGNORE_LOCK, default=False): cv.boolean,
@@ -70,9 +69,8 @@ CONFIG_SCHEMA = climate.CLIMATE_SCHEMA.extend(
 ).extend(cv.COMPONENT_SCHEMA)
 
 async def to_code(config):
-    var = cg.new_Pvariable(config[CONF_ID], await cg.get_variable(config[CONF_CENTRAL_CONTROLLER_ID]), config[CONF_INDOOR_UNIT])
+    var = await climate.new_climate(config, await cg.get_variable(config[CONF_CENTRAL_CONTROLLER_ID]), config[CONF_INDOOR_UNIT])
     await cg.register_component(var, config)
-    await climate.register_climate(var, config)
 
     cg.add(var.set_ignore_lock(config[CONF_IGNORE_LOCK]))
 
