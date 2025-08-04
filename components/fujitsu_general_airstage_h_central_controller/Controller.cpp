@@ -217,7 +217,7 @@ bool Controller::can_control_unit(uint8_t unit, bool ignore_lock) const {
 }
 
 void Controller::process_packet(const Packet& packet) {
-    if (packet.SourceType == AddressTypeEnum::OutdoorUnit) {
+    if (packet.SourceType == AddressTypeEnum::OutdoorUnit || packet.SourceType == AddressTypeEnum::BranchBox) {
         // Setpoint of 0 indicates end of list, not state of an indoor unit
         if (packet.Config.Setpoint) {
             const auto unit = packet.Config.OutdoorUnit.IndoorUnit;

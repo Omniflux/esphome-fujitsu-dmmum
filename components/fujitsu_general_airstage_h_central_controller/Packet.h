@@ -10,10 +10,9 @@ namespace fujitsu_general::airstage::h::central_controller {
 constexpr uint8_t TemperatureOffset = 4;
 
 enum class AddressTypeEnum : uint8_t {
-    // These should really be 0 and 1, but not sure which bit is correct,
-    // and all always change together in observed packets...
-    OutdoorUnit = 16,
-    Controller = 36
+    OutdoorUnit = 1,
+    Controller,
+    BranchBox
 };
 
 enum class FanSpeedEnum : uint8_t {
@@ -89,8 +88,10 @@ constexpr struct BMS {
     // These almost certainly are actually more than one field...
     // Type Controller, Outdoor Unit, Branch Box? + Branch Box Address?
     // I do not have Branch Boxes to test with...
-    constexpr static auto SourceType                 = ByteMaskShiftData(0, 0b00111111);
-    constexpr static auto TokenDestinationType       = ByteMaskShiftData(1, 0b00111111);
+    constexpr static auto SourceType                 = ByteMaskShiftData(0, 0b00110000);
+    constexpr static auto SourceAddress              = ByteMaskShiftData(0, 0b00001100);
+    constexpr static auto TokenDestinationType       = ByteMaskShiftData(1, 0b00110000);
+    constexpr static auto TokenDestinationAddress    = ByteMaskShiftData(1, 0b00001100);
 
     constexpr static struct Config {
         constexpr static struct OutdoorUnit {
@@ -135,7 +136,9 @@ class Packet {
         Buffer to_buffer() const;
 
         AddressTypeEnum SourceType {};
+        uint8_t         SourceAddress {};
         AddressTypeEnum TokenDestinationType {};
+        uint8_t         TokenDestinationAddress {};
 
         struct Config Config {};
 
