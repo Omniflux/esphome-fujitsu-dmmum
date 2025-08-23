@@ -41,7 +41,9 @@ void FujitsuGeneralAirStageHCentralController::dump_config() {
     ESP_LOGCONFIG(TAG, "FujitsuGeneralAirStageHCentralController:");
     for (auto unit : this->controller->get_known_units())
         ESP_LOGCONFIG(TAG, "  Indoor Unit: %u", unit + 1);
-    LOG_TZSP("  ", this);
+        LOG_BUTTON("  ", "ODU Mode Change Button", this->odu_mode_change_button);
+        LOG_SWITCH("  ", "Low Noise Mode Switch", this->low_noise_switch);
+        LOG_TZSP("  ", this);
 
     this->check_uart_settings(
         fujitsu_general::airstage::h::central_controller::UARTConfig.baud_rate,

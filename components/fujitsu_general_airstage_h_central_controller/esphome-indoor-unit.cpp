@@ -48,6 +48,10 @@ void FujitsuGeneralAirStageHIndoorUnit::dump_config() {
     LOG_CLIMATE("", "FujitsuGeneralAirStageHIndoorUnit", this);
     ESP_LOGCONFIG(TAG, "  Indoor Unit: %u", this->indoor_unit_ + 1);
     ESP_LOGCONFIG(TAG, "  Ignore Lock: %s", this->ignore_lock_ ? "YES" : "NO");
+    LOG_SWITCH("  ", "Minimum Heat Mode Switch", this->min_heat_switch);
+    LOG_SWITCH("  ", "RC Prohibit Mode Switch", this->rc_prohibit_switch);
+    LOG_BINARY_SENSOR("  ", "Incompatible Mode Sensor", this->incompatible_mode_sensor);
+    LOG_BINARY_SENSOR("  ", "Error Sensor", this->error_sensor);
     LOG_SENSOR("  ", "Temperature Sensor", this->temperature_sensor_);
     LOG_SENSOR("  ", "Humidity Sensor", this->humidity_sensor_);
     this->dump_traits_(TAG);

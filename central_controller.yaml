@@ -1,0 +1,9 @@
+button:
+  - platform: fujitsu_general_airstage_h_central_controller
+    odu_mode_change:
+      name: Force ODU Mode Change
+
+switch:
+  - platform: fujitsu_general_airstage_h_central_controller
+    low_noise:
+      name: Low Noise Mode
