@@ -9,9 +9,10 @@ static const auto TAG = "esphome::fujitsu_general_airstage_h_central_controller:
 void FujitsuGeneralAirStageHIndoorUnit::setup() {
     this->controller_->set_config_callback(this->indoor_unit_, [this](const fujitsu_general::airstage::h::central_controller::Config& data){ this->update_from_device(data); });
 
-    if (this->humidity_sensor_)
+#ifdef USE_SENSOR
+    if (this->humidity_sensor_ != nullptr)
     {
-        this->humidity_sensor_->add_on_raw_state_callback([this](float state) {
+        this->humidity_sensor_->add_on_state_callback([this](float state) {
             this->current_humidity = state;
             this->publish_state();
         });
@@ -19,41 +20,34 @@ void FujitsuGeneralAirStageHIndoorUnit::setup() {
         this->current_humidity = this->humidity_sensor_->state;
     }
 
-    if (this->temperature_sensor_)
+    if (this->temperature_sensor_ != nullptr)
     {
-        // Temperature sensor is in Fahrenheit
-        if (this->temperature_sensor_->get_unit_of_measurement().ends_with("F"))
-        {
-            this->temperature_sensor_->add_on_raw_state_callback([this](float state) {
-                this->current_temperature = (state - 32.0) * (5.0/9.0);
-                this->publish_state();
-            });
+        this->temperature_sensor_->add_on_state_callback([this](float state) {
+            this->current_temperature = state;
+            this->publish_state();
+        });
 
-            this->current_temperature = (this->temperature_sensor_->state - 32.0) * (5.0/9.0);
-        }
-        // Temperature sensor is in Celsius
-        else
-        {
-            this->temperature_sensor_->add_on_raw_state_callback([this](float state) {
-                this->current_temperature = state;
-                this->publish_state();
-            });
-
-            this->current_temperature = this->temperature_sensor_->state;
-        }
+        this->current_temperature = this->temperature_sensor_->state;
     }
+#endif
 }
 
 void FujitsuGeneralAirStageHIndoorUnit::dump_config() {
     LOG_CLIMATE("", "FujitsuGeneralAirStageHIndoorUnit", this);
     ESP_LOGCONFIG(TAG, "  Indoor Unit: %u", this->indoor_unit_ + 1);
     ESP_LOGCONFIG(TAG, "  Ignore Lock: %s", this->ignore_lock_ ? "YES" : "NO");
+#ifdef USE_SWITCH
     LOG_SWITCH("  ", "Minimum Heat Mode Switch", this->min_heat_switch);
     LOG_SWITCH("  ", "RC Prohibit Mode Switch", this->rc_prohibit_switch);
-    LOG_BINARY_SENSOR("  ", "Incompatible Mode Sensor", this->incompatible_mode_sensor);
-    LOG_BINARY_SENSOR("  ", "Error Sensor", this->error_sensor);
+#endif
+#ifdef USE_BINARY_SENSOR
+    LOG_BINARY_SENSOR("  ", "Incompatible Mode Sensor", this->incompatible_mode_binary_sensor_);
+    LOG_BINARY_SENSOR("  ", "Error Sensor", this->error_binary_sensor_);
+#endif
+#ifdef USE_SENSOR
     LOG_SENSOR("  ", "Temperature Sensor", this->temperature_sensor_);
     LOG_SENSOR("  ", "Humidity Sensor", this->humidity_sensor_);
+#endif
     this->dump_traits_(TAG);
 }
 
@@ -67,9 +61,11 @@ climate::ClimateTraits FujitsuGeneralAirStageHIndoorUnit::traits() {
     traits.set_visual_min_temperature(fujitsu_general::airstage::h::central_controller::MinSetpoint);
     traits.set_visual_max_temperature(fujitsu_general::airstage::h::central_controller::MaxSetpoint);
 
+#ifdef USE_SENSOR
     // Current temperature / humidity
     traits.set_supports_current_humidity(this->humidity_sensor_ != nullptr);
     traits.set_supports_current_temperature(this->temperature_sensor_ != nullptr);
+#endif
 
     // Mode
     traits.set_supported_modes({
@@ -135,22 +131,24 @@ void FujitsuGeneralAirStageHIndoorUnit::update_from_device(const fujitsu_general
 
     auto need_to_publish = false;
 
+#ifdef USE_BINARY_SENSOR
     // Error sensor
-    if (!this->error_sensor->has_state())
-        this->error_sensor->publish_state(data.OutdoorUnit.Error);
+    if (this->error_binary_sensor_ != nullptr)
+        this->error_binary_sensor_->publish_state(data.OutdoorUnit.Error);
 
     // Incompatible mode sensor
     // Indicates configured mode is incompatible with current ODU mode
-    if (!this->incompatible_mode_sensor->has_state() || data.OutdoorUnit.IncompatibleMode != this->incompatible_mode_sensor->state)
-        this->incompatible_mode_sensor->publish_state(data.OutdoorUnit.IncompatibleMode);
+    if (this->incompatible_mode_binary_sensor_ != nullptr)
+        this->incompatible_mode_binary_sensor_->publish_state(data.OutdoorUnit.IncompatibleMode);
+#endif
 
+#ifdef USE_SWITCH
     // Minimum Heat mode    // TODO May need to clear eco mode
-    if (data.OutdoorUnit.MinHeat != this->min_heat_switch->state)
-        this->min_heat_switch->publish_state(data.OutdoorUnit.MinHeat);
+    this->min_heat_switch->publish_state(data.OutdoorUnit.MinHeat);
 
     // RC Prohibit switch
-    if (data.OutdoorUnit.RCProhibit != this->rc_prohibit_switch->state)
-        this->rc_prohibit_switch->publish_state(data.OutdoorUnit.RCProhibit);
+    this->rc_prohibit_switch->publish_state(data.OutdoorUnit.RCProhibit);
+#endif
 
     // Economy mode
     if (data.OutdoorUnit.Economy != (this->preset == ClimatePreset::CLIMATE_PRESET_ECO)) {

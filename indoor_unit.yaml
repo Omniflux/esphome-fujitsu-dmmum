@@ -1,6 +1,6 @@
 esphome:
   devices:
-    - id: ${id}_climate
+    - id: ${id}_controller
       name: ${name}
 
 climate:
@@ -8,24 +8,24 @@ climate:
     indoor_unit: ${unit_number}
     name: None
     id: ${id}
-    device_id: ${id}_climate
+    device_id: ${id}_controller
 
 binary_sensor:
   - platform: fujitsu_general_airstage_h_central_controller
     indoor_unit_id: ${id}
     incompatible_mode:
       name: Incompatible Mode
-      device_id: ${id}_climate
+      device_id: ${id}_controller
     error_state:
       name: Error
-      device_id: ${id}_climate
+      device_id: ${id}_controller
 
 switch:
   - platform: fujitsu_general_airstage_h_central_controller
     indoor_unit_id: ${id}
     min_heat:
       name: Minimum Heat Mode
-      device_id: ${id}_climate
+      device_id: ${id}_controller
     rc_prohibit:
       name: RC Prohibit
-      device_id: ${id}_climate
+      device_id: ${id}_controller

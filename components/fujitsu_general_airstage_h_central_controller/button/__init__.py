@@ -31,5 +31,6 @@ CONFIG_SCHEMA = CENTRAL_CONTROLLER_CHILD_SCHEMA.extend(
 
 async def to_code(config):
     controller = await cg.get_variable(config[CONF_CENTRAL_CONTROLLER_ID])
+
     var = cg.Pvariable(config[CONF_ODU_MODE_CHANGE][CONF_ID], controller.odu_mode_change_button)
     await button.register_button(var, config[CONF_ODU_MODE_CHANGE])

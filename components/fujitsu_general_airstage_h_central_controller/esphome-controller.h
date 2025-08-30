@@ -8,8 +8,13 @@
 
 #include <esphome/components/tzsp/tzsp.h>
 
+#ifdef USE_BUTTON
 #include "esphome-custom-button.h"
+#endif
+#ifdef USE_SWITCH
 #include "esphome-custom-switch.h"
+#endif
+
 #include "Controller.h"
 
 namespace esphome::fujitsu_general_airstage_h_central_controller {
@@ -18,8 +23,12 @@ class FujitsuGeneralAirStageHCentralController : public Component, public uart::
     friend class FujitsuGeneralAirStageHIndoorUnit;
 
     public:
+#ifdef USE_BUTTON
         custom::CustomButton* odu_mode_change_button = new custom::CustomButton([this]() { this->controller->odu_mode_change(); });
+#endif
+#ifdef USE_SWITCH
         custom::CustomSwitch* low_noise_switch = new custom::CustomSwitch([this](bool state) { this->controller->set_low_noise(state); return state; });
+#endif
 
         FujitsuGeneralAirStageHCentralController(uart::IDFUARTComponent *parent) : uart::UARTDevice(parent) {}
 

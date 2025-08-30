@@ -56,6 +56,7 @@ CONFIG_SCHEMA = cv.Any(
 async def to_code(config):
     if CONF_CENTRAL_CONTROLLER_ID in config:
         controller = await cg.get_variable(config[CONF_CENTRAL_CONTROLLER_ID])
+
         var = cg.Pvariable(config[CONF_LOW_NOISE][CONF_ID], controller.low_noise_switch)
         await switch.register_switch(var, config[CONF_LOW_NOISE])
 

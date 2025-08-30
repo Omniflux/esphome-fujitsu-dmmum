@@ -41,8 +41,12 @@ void FujitsuGeneralAirStageHCentralController::dump_config() {
     ESP_LOGCONFIG(TAG, "FujitsuGeneralAirStageHCentralController:");
     for (auto unit : this->controller->get_known_units())
         ESP_LOGCONFIG(TAG, "  Indoor Unit: %u", unit + 1);
+#ifdef USE_BUTTON
         LOG_BUTTON("  ", "ODU Mode Change Button", this->odu_mode_change_button);
+#endif
+#ifdef USE_SWITCH
         LOG_SWITCH("  ", "Low Noise Mode Switch", this->low_noise_switch);
+#endif
         LOG_TZSP("  ", this);
 
     this->check_uart_settings(
@@ -54,8 +58,9 @@ void FujitsuGeneralAirStageHCentralController::dump_config() {
 }
 
 void FujitsuGeneralAirStageHCentralController::update_from_device(const fujitsu_general::airstage::h::central_controller::Config& data) {
-    if (data.OutdoorUnit.LowNoise != this->low_noise_switch->state)
-        this->low_noise_switch->publish_state(data.OutdoorUnit.LowNoise);
+#ifdef USE_SWITCH
+    this->low_noise_switch->publish_state(data.OutdoorUnit.LowNoise);
+#endif
 
     auto callback = this->config_callbacks.find(data.OutdoorUnit.IndoorUnit);
     if (callback != this->config_callbacks.end())

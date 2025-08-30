@@ -4,7 +4,6 @@ import esphome.config_validation as cv
 from esphome.components import binary_sensor
 
 from esphome.const import (
-    CONF_ID,
     DEVICE_CLASS_PROBLEM,
     ENTITY_CATEGORY_DIAGNOSTIC,
 )
@@ -39,8 +38,10 @@ CONFIG_SCHEMA = INDOOR_UNIT_CHILD_SCHEMA.extend(
 async def to_code(config):
     controller = await cg.get_variable(config[CONF_INDOOR_UNIT_ID])
 
-    var = cg.Pvariable(config[CONF_INCOMPATIBLE_MODE][CONF_ID], controller.incompatible_mode_sensor)
-    await binary_sensor.register_binary_sensor(var, config[CONF_INCOMPATIBLE_MODE])
+    if CONF_INCOMPATIBLE_MODE in config:
+        var = await binary_sensor.new_binary_sensor(config[CONF_INCOMPATIBLE_MODE])
+        cg.add(controller.set_incompatible_mode_binary_sensor(var))
 
-    var = cg.Pvariable(config[CONF_ERROR_STATE][CONF_ID], controller.error_sensor)
-    await binary_sensor.register_binary_sensor(var, config[CONF_ERROR_STATE])
+    if CONF_ERROR_STATE in config:
+        var = await binary_sensor.new_binary_sensor(config[CONF_ERROR_STATE])
+        cg.add(controller.set_error_binary_sensor(var))
