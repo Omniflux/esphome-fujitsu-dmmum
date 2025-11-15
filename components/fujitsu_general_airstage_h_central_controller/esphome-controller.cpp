@@ -14,8 +14,8 @@ void FujitsuGeneralAirStageHCentralController::setup() {
                 this->log_buffer("RX", buf, length);
             },
             .WriteBytes = [this](const uint8_t *buf, size_t length){
-                this->write_array(buf, length);
-                this->log_buffer("TX", buf, length);
+//                this->write_array(buf, length);
+                this->log_buffer("TX(SKIPPED)", buf, length);
             }
         },
         *static_cast<uart::IDFUARTComponent*>(this->parent_)->get_uart_event_queue()
