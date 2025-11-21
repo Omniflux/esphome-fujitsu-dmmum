@@ -62,9 +62,13 @@ climate::ClimateTraits FujitsuGeneralAirStageHIndoorUnit::traits() {
     traits.set_visual_max_temperature(fujitsu_general::airstage::h::central_controller::MaxSetpoint);
 
 #ifdef USE_SENSOR
-    // Current temperature / humidity
-    traits.set_supports_current_humidity(this->humidity_sensor_ != nullptr);
-    traits.set_supports_current_temperature(this->temperature_sensor_ != nullptr);
+    // Current temperature
+    if (this->temperature_sensor_ != nullptr)
+        traits.add_feature_flags(climate::CLIMATE_SUPPORTS_CURRENT_TEMPERATURE);
+
+    // Current humidity
+    if (this->humidity_sensor_ != nullptr)
+        traits.add_feature_flags(climate::CLIMATE_SUPPORTS_CURRENT_HUMIDITY);
 #endif
 
     // Mode
