@@ -71,6 +71,8 @@ class Controller {
         uart_port_t uart_num;
         QueueHandle_t uart_event_queue;
         Callbacks callbacks;
+        bool destinationIdentified{};
+        AddressTypeEnum destinationType{AddressTypeEnum::OutdoorUnit};
 
         std::map<uint8_t, struct Config> current_configuration;
         std::map<uint8_t, struct Config> changed_configuration;

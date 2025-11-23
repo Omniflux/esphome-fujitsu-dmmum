@@ -78,57 +78,58 @@ void Controller::uart_event_task() {
     uart_event_t event;
 
     for(;;) {
-        // Transmit updates
-        for (const auto& [unit, config] : this->changed_configuration)
-        {
-            ESP_LOGD(TAG, "Update for unit: %u", unit);
-            Packet packet;
-            packet.SourceType = AddressTypeEnum::Controller;
-            packet.TokenDestinationType = AddressTypeEnum::Controller;
-            packet.Config = config;
-            packet.Config.IndoorUnitBitfield = 1 << unit;
+        if (destinationIdentified) {
+            // Transmit updates
+            for (const auto& [unit, config] : this->changed_configuration) {
+                ESP_LOGD(TAG, "Update for unit: %u", unit);
+                Packet packet;
+                packet.SourceType = AddressTypeEnum::Controller;
+                packet.TokenDestinationType = AddressTypeEnum::Controller;
+                packet.Config = config;
+                packet.Config.IndoorUnitBitfield = 1 << unit;
 
-            if (packet.Config.Setpoint == 0)
-                packet.Config.Setpoint = this->current_configuration[unit].Setpoint;
+                if (packet.Config.Setpoint == 0)
+                    packet.Config.Setpoint = this->current_configuration[unit].Setpoint;
 
-            if (packet.Config.FanSpeed == FanSpeedEnum::NoChange)
-                packet.Config.FanSpeed = this->current_configuration[unit].FanSpeed;
+                if (packet.Config.FanSpeed == FanSpeedEnum::NoChange)
+                    packet.Config.FanSpeed = this->current_configuration[unit].FanSpeed;
 
-            if (packet.Config.Mode == ModeEnum::NoChange)
-                packet.Config.Mode = this->current_configuration[unit].Mode;
+                if (packet.Config.Mode == ModeEnum::NoChange)
+                    packet.Config.Mode = this->current_configuration[unit].Mode;
 
-            if (packet.Config.Controller.Enabled == TriStateEnum::NoChange)
-                packet.Config.Controller.Enabled = boolToTriState(this->current_configuration[unit].OutdoorUnit.Enabled);
+                if (packet.Config.Controller.Enabled == TriStateEnum::NoChange)
+                    packet.Config.Controller.Enabled = boolToTriState(this->current_configuration[unit].OutdoorUnit.Enabled);
 
-            if (packet.Config.Controller.Economy == TriStateEnum::NoChange)
-                packet.Config.Controller.Economy = boolToTriState(this->current_configuration[unit].OutdoorUnit.Economy);
+                if (packet.Config.Controller.Economy == TriStateEnum::NoChange)
+                    packet.Config.Controller.Economy = boolToTriState(this->current_configuration[unit].OutdoorUnit.Economy);
 
-            if (packet.Config.Controller.MinHeat == TriStateEnum::NoChange)
-                packet.Config.Controller.MinHeat = boolToTriState(this->current_configuration[unit].OutdoorUnit.MinHeat);
+                if (packet.Config.Controller.MinHeat == TriStateEnum::NoChange)
+                    packet.Config.Controller.MinHeat = boolToTriState(this->current_configuration[unit].OutdoorUnit.MinHeat);
 
-            if (packet.Config.Controller.LowNoise == TriStateEnum::NoChange)
-                packet.Config.Controller.LowNoise = boolToTriState(this->current_configuration[unit].OutdoorUnit.LowNoise);
+                if (packet.Config.Controller.LowNoise == TriStateEnum::NoChange)
+                    packet.Config.Controller.LowNoise = boolToTriState(this->current_configuration[unit].OutdoorUnit.LowNoise);
 
-            if (packet.Config.Controller.RCProhibit == TriStateEnum::NoChange)
-                packet.Config.Controller.RCProhibit = boolToTriState(this->current_configuration[unit].OutdoorUnit.RCProhibit);
+                if (packet.Config.Controller.RCProhibit == TriStateEnum::NoChange)
+                    packet.Config.Controller.RCProhibit = boolToTriState(this->current_configuration[unit].OutdoorUnit.RCProhibit);
 
-            Packet::Buffer buffer = packet.to_buffer();
-            this->uart_write_bytes(buffer.data(), buffer.size());
+                Packet::Buffer buffer = packet.to_buffer();
+                this->uart_write_bytes(buffer.data(), buffer.size());
 
-            // ODU will only process first packet if they are not sent as separate frames
-            vTaskDelay(pdMS_TO_TICKS(InterPacketDelay));
+                // ODU will only process first packet if they are not sent as separate frames
+                vTaskDelay(pdMS_TO_TICKS(InterPacketDelay));
+            }
+            this->changed_configuration.clear();
         }
-        this->changed_configuration.clear();
 
         // Transmit query
         Packet packet;
         packet.SourceType = AddressTypeEnum::Controller;
-        packet.TokenDestinationType = AddressTypeEnum::OutdoorUnit;
+        packet.TokenDestinationType = this->destinationType;
         Packet::Buffer buffer = packet.to_buffer();
         this->uart_write_bytes(buffer.data(), buffer.size());
 
         // Listen for incoming packets
-        for(AddressTypeEnum TokenHolder = AddressTypeEnum::OutdoorUnit; TokenHolder != AddressTypeEnum::Controller;) {
+        for(AddressTypeEnum TokenHolder = this->destinationType; TokenHolder != AddressTypeEnum::Controller;) {
             if (xQueueReceive(this->uart_event_queue, &event, pdMS_TO_TICKS(TokenTimeout))) {
                 switch(event.type) {
                     [[likely]] case UART_DATA:
@@ -150,6 +151,9 @@ void Controller::uart_event_task() {
                             this->process_packet(rx_packet);
                             TokenHolder = rx_packet.TokenDestinationType;
                         }
+
+                        // Stop searching for token destination type
+                        destinationIdentified = true;
 
                         break;
 
@@ -190,9 +194,12 @@ void Controller::uart_event_task() {
                         break;
                 }
             }
-            else
-                // Token timed out
+            else    // Token timed out
+            {
+                if (!destinationIdentified)
+                    this->destinationType = this->destinationType == AddressTypeEnum::OutdoorUnit ? AddressTypeEnum::BranchBox : AddressTypeEnum::OutdoorUnit;
                 break;
+            }
         }  
     }
 }
