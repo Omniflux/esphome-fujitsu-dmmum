@@ -85,9 +85,6 @@ struct ByteMaskShiftData {
 };
 
 constexpr struct BMS {
-    // These almost certainly are actually more than one field...
-    // Type Controller, Outdoor Unit, Branch Box? + Branch Box Address?
-    // I do not have Branch Boxes to test with...
     constexpr static auto SourceType                 = ByteMaskShiftData(0, 0b00110000);
     constexpr static auto SourceAddress              = ByteMaskShiftData(0, 0b00001100);
     constexpr static auto TokenDestinationType       = ByteMaskShiftData(1, 0b00110000);
