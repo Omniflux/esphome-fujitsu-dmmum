@@ -13,6 +13,7 @@ DEPENDENCIES = ["tzsp", "uart"]
 AUTO_LOAD = ["tzsp"]
 
 CONF_CENTRAL_CONTROLLER_ID = "fujitsu_general_airstage_h_central_controller"
+CONF_TRANSMIT = "transmit"
 
 fujitsu_general_airstage_h_central_controller_ns = cg.esphome_ns.namespace("fujitsu_general_airstage_h_central_controller")
 FujitsuGeneralAirStageHCentralController = fujitsu_general_airstage_h_central_controller_ns.class_("FujitsuGeneralAirStageHCentralController", cg.Component, uart.UARTDevice)
@@ -29,7 +30,8 @@ FINAL_VALIDATE_SCHEMA = uart.final_validate_device_schema(
 
 CONFIG_SCHEMA = cv.Schema(
         {
-        cv.GenerateID(): cv.declare_id(FujitsuGeneralAirStageHCentralController),
+            cv.GenerateID(): cv.declare_id(FujitsuGeneralAirStageHCentralController),
+            cv.Optional(CONF_TRANSMIT, default=True): cv.boolean,
         },
     ).extend(cv.COMPONENT_SCHEMA).extend(uart.UART_DEVICE_SCHEMA).extend(tzsp.TZSP_SENDER_SCHEMA)
 
@@ -44,3 +46,5 @@ async def to_code(config):
     await cg.register_component(var, config)
     await uart.register_uart_device(var, config)
     await tzsp.register_tzsp_sender(var, config)
+
+    cg.add(var.set_transmit(config[CONF_TRANSMIT]))

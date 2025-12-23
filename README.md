@@ -91,6 +91,13 @@ climate:
     humidity_sensor: indoor_unit_1_sensor_humidity
 ```
 
+Place component in read only mode to capture OEM controller data.
+
+```yaml
+fujitsu_general_airstage_h_central_controller:
+  transmit: false
+```
+
 Configure TZSP and use Wireshark with [fujitsu-airstage-h-dissector](https://github.com/Omniflux/fujitsu-airstage-h-dissector) to debug / decode the Fujitsu serial protocol.
 
 ```yaml

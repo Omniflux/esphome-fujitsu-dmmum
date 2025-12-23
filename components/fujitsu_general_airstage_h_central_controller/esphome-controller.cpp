@@ -14,8 +14,13 @@ void FujitsuGeneralAirStageHCentralController::setup() {
                 this->log_buffer("RX", buf, length);
             },
             .WriteBytes = [this](const uint8_t *buf, size_t length){
-                this->write_array(buf, length);
-                this->log_buffer("TX", buf, length);
+                if (this->transmit_)
+                {
+                    this->write_array(buf, length);
+                    this->log_buffer("TX", buf, length);
+                }
+                else
+                    this->log_buffer("TX(SKIPPED)", buf, length);
             }
         },
         *static_cast<uart::IDFUARTComponent*>(this->parent_)->get_uart_event_queue()
@@ -39,6 +44,9 @@ void FujitsuGeneralAirStageHCentralController::log_buffer(const char* dir, const
 
 void FujitsuGeneralAirStageHCentralController::dump_config() {
     ESP_LOGCONFIG(TAG, "FujitsuGeneralAirStageHCentralController:");
+    if (!this->transmit_)
+        ESP_LOGCONFIG(TAG, "  Transmit: DISABLED");
+
     for (auto unit : this->controller->get_known_units())
         ESP_LOGCONFIG(TAG, "  Indoor Unit: %u", unit + 1);
 #ifdef USE_BUTTON

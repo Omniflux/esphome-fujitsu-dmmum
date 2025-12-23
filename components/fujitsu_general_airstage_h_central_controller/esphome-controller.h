@@ -36,11 +36,13 @@ class FujitsuGeneralAirStageHCentralController : public Component, public uart::
         void dump_config() override;
         float get_setup_priority() const override { return esphome::setup_priority::DATA; }
 
+        void set_transmit(bool transmit) { this->transmit_ = transmit; }
         void set_config_callback(uint8_t unit, const fujitsu_general::airstage::h::central_controller::Controller::ConfigCallback& config_callback) { config_callbacks[unit] = config_callback; };
 
     private:
         fujitsu_general::airstage::h::central_controller::Controller* controller;
         std::map<uint8_t, fujitsu_general::airstage::h::central_controller::Controller::ConfigCallback> config_callbacks;
+        bool transmit_{};
 
         void log_buffer(const char* dir, const uint8_t* buf, size_t length) const;
 
