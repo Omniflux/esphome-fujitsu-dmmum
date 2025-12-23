@@ -77,9 +77,8 @@ sensor:
   - platform: homeassistant # https://esphome.io/components/sensor/homeassistant.html
     id: indoor_unit_1_sensor_temperature # ESPHome sensor name used below
     entity_id: sensor.room_1_sensor_temperature # Home Assistant entity_id
-    filters: # Home Assistant sensor data is °C, optionally convert to °F 
-      - lambda: return x * (9.0/5.0) + 32.0;
-    unit_of_measurement: "°F"
+    filters: # Sensor value must be °C, convert from °F if reading from fahrenheit sensor
+      - lambda: return fahrenheit_to_celsius(x);
 
   - platform: homeassistant
     id: indoor_unit_1_sensor_humidity
