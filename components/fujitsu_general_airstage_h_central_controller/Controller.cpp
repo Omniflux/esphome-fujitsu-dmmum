@@ -62,6 +62,13 @@ bool Controller::start() {
         return false;
     }
 
+    // Ensure large enough not to trigger mid frame, resynchronize from rx_timeout instead
+    err = uart_set_rx_full_threshold(this->uart_num, Packet::FrameSize * 4);
+    if (err != ESP_OK) {
+        ESP_LOGE(TAG, "Failed to set UART RX full threshold: %s", esp_err_to_name(err));
+        return false;
+    }
+
     // Default timeout (time to transmit 10 characters at 500bps) is too long
     err = uart_set_rx_timeout(this->uart_num, UARTInterPacketSymbolSpacing);
     if (err != ESP_OK) {
