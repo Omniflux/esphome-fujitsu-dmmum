@@ -47,4 +47,6 @@ async def to_code(config):
     await uart.register_uart_device(var, config)
     await tzsp.register_tzsp_sender(var, config)
 
+    uart.request_wake_loop_on_rx()
+
     cg.add(var.set_transmit(config[CONF_TRANSMIT]))
